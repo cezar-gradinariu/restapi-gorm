@@ -11,7 +11,7 @@ docker pull mcr.microsoft.com/mssql/server:2017-latest
 
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong!Passw0rd>"  -p 1433:1433 --name sql1   -d mcr.microsoft.com/mssql/server:2017-latest
 # or piped
-docker rm -f sql-gorm |  docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong!Passw0rd>"  -p 1433:1433 --name sql1   -d mcr.microsoft.com/mssql/server:2017-latest
+docker rm -f sql1 |  docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong!Passw0rd>"  -p 1433:1433 --name sql1   -d mcr.microsoft.com/mssql/server:2017-latest
 # you can change username and password but I leave it as is, since it is a container to be thrown away anyway
 ```
 
@@ -31,7 +31,7 @@ then,
 
 ```bash
 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '<YourStrong!Passw0rd>'
-1> CREATE DATABASE TempDb
+1> CREATE DATABASE GORM_TEST_DB
 2> SELECT Name from sys.Databases
 3> GO
 ```

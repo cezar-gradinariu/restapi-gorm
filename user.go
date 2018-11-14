@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mssql"
-	"net/http"
 )
 
 var db *gorm.DB
@@ -17,7 +18,7 @@ var (
 	port     = 1433
 	user     = "sa"
 	password = "<YourStrong!Passw0rd>"
-	database = "DbTest"
+	database = "GORM_TEST_DB"
 )
 
 type User struct {
@@ -50,6 +51,7 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var users []User
+	//db.Offset(10).Limit(10).Find(&users) // TODO : IN mssql it doesn't work, there is a fix: https://github.com/jinzhu/gorm/issues/1205 but i don't understand it yet....
 	db.Find(&users)
 
 	json, err := json.MarshalIndent(users, "", "	")
@@ -120,3 +122,22 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		db.Save(&user)
 	}
 }
+
+// https://github.com/jinzhu/gorm/issues/1205 but i don't understand it yet.... what is the (mssql) thing after func ???
+// func (mssql) LimitAndOffsetSQL(limit, offset interface{}) (sql string) {
+// 	if offset != nil {
+// 		if parsedOffset, err := strconv.ParseInt(fmt.Sprint(offset), 0, 0); err == nil && parsedOffset > 0 {
+// 			sql += fmt.Sprintf(" OFFSET %d ROWS", parsedOffset)
+// 		}
+// 	}
+// 	if limit != nil {
+// 		if parsedLimit, err := strconv.ParseInt(fmt.Sprint(limit), 0, 0); err == nil && parsedLimit > 0 {
+// 			if sql == "" {
+// 				// add default zero offset
+// 				sql += " OFFSET 0 ROWS"
+// 			}
+// 			sql += fmt.Sprintf(" FETCH NEXT %d ROWS ONLY", parsedLimit)
+// 		}
+// 	}
+// 	return
+// }
